@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EUNSEO JEONG® — Portfolio</title>
+<meta name="description" content="Eunseo Jeong — a design generalist. 브랜드, 3D, AI, 에디토리얼, 모션 — 경계 없이 만듭니다.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E✳%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Fragment+Mono&family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Nunito:wght@400..800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<style>
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body,'Archivo','Pretendard Variable',sans-serif);transition:background .4s,color .4s;
+--font-head:'Archivo','Pretendard Variable',sans-serif;--head-wt:900;--head-ls:-.04em;
+--bg:#f1efeb;--ink:#161513;--mut:rgba(22,21,19,.55);--line:rgba(22,21,19,.14);--card:#fbfaf8;--pill:rgba(251,250,248,.75);--accent:oklch(0.72 0.17 230);--shelf:linear-gradient(#fff,#e4e1db);--glass:linear-gradient(115deg,rgba(255,255,255,.62),rgba(255,255,255,.26) 45%,rgba(255,255,255,.52));--glass-line:rgba(255,255,255,.55);}
+body[data-theme="dark"]{--bg:#121110;--ink:#f0eee9;--mut:rgba(240,238,233,.55);--line:rgba(240,238,233,.16);--card:#1c1b19;--pill:rgba(28,27,25,.7);--shelf:linear-gradient(#26241f,#171613);}
+a{color:var(--ink);text-decoration:none}a:hover{color:var(--accent)}
+h1,h2{font-family:var(--font-head);font-weight:var(--head-wt);letter-spacing:var(--head-ls)}
+::selection{background:var(--accent);color:#161513}
+html{scroll-behavior:smooth}
+@keyframes marq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* glass pills (style-hover → :hover) */
+.glass{background:var(--glass);background-size:220% 100%;background-position:0% 0%;backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5);border:1px solid var(--glass-line);box-sizing:border-box;color:#161513;transition:background-position .45s,border-color .3s}
+.glass:hover{background-position:100% 0%;border-color:rgba(255,255,255,.85)}
+a.glass:hover{color:#161513}
+.navtab{display:inline-flex;align-items:center;padding:0 14px;border-radius:99px;font-size:12.5px;font-weight:600;letter-spacing:.04em;color:#161513}
+.navtab:hover{background:rgba(255,255,255,.65);color:#161513}
+
+/* work covers */
+.cover{width:100%;aspect-ratio:1;cursor:pointer;transition:transform .3s cubic-bezier(.2,.7,.2,1);box-shadow:0 18px 40px -18px rgba(0,0,0,.45)}
+.cover:hover{transform:translateY(-14px) rotate(-1deg)}
+.cover img{display:block;width:100%;height:100%;object-fit:cover;box-shadow:19px 4px 13px 0 rgba(0,0,0,.15)}
+.shelf-row{display:grid;grid-template-columns:repeat(3,minmax(0,300px));justify-content:center;align-items:end;gap:clamp(20px,4vw,56px)}
+.shelf-labels{display:grid;grid-template-columns:repeat(3,minmax(0,300px));justify-content:center;gap:clamp(20px,4vw,56px);padding:0 20px;margin-top:22px}
+.shelf-board{position:absolute;left:0;right:0;bottom:0;height:19px;background:var(--shelf);border-radius:2px;box-shadow:19px 20px 18px -8px rgba(0,0,0,.35)}
+
+/* hero image-slot (empty state mirrors the design component's placeholder) */
+.hero-slot{position:absolute;inset:0;overflow:hidden;background:rgba(0,0,0,.04)}
+.hero-slot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero-slot .empty-cap{display:none}
+.hero-slot.is-empty::after{content:"";position:absolute;inset:0;border:1.5px dashed rgba(0,0,0,.25);pointer-events:none}
+.hero-slot.is-empty .empty-cap{display:flex;position:absolute;inset:0;align-items:center;justify-content:center;text-align:center;padding:12px;font:500 13px/1.3 system-ui,-apple-system,sans-serif;color:rgba(0,0,0,.55);letter-spacing:.01em}
+body[data-theme="dark"] .hero-slot{background:rgba(255,255,255,.04)}
+body[data-theme="dark"] .hero-slot.is-empty::after{border-color:rgba(255,255,255,.25)}
+body[data-theme="dark"] .hero-slot.is-empty .empty-cap{color:rgba(255,255,255,.55)}
+
+/* cv rows */
+.cvrow{transition:background .2s}
+.cvrow:hover{background:var(--card)}
+
+/* footer big link */
+.talk:hover{color:var(--accent)}
+
+/* cursor chip */
+#chip{position:fixed;display:none;z-index:60;pointer-events:none;background:var(--ink);color:var(--bg);border-radius:99px;padding:9px 15px;font-family:'Fragment Mono',monospace;font-size:11px;letter-spacing:.05em;white-space:nowrap}
+
+/* light responsive adjustments */
+@media (max-width:860px){
+  nav.top{flex-wrap:wrap;row-gap:8px}
+  .about-grid{grid-template-columns:1fr !important}
+  .cvrow{grid-template-columns:1fr !important;gap:6px !important}
+}
+@media (max-width:640px){
+  .status-pill{display:none !important}
+}
+</style>
+</head>
+<body data-theme="light">
+
+<nav class="top" style="position:fixed;top:16px;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:0 20px;pointer-events:none">
+  <div style="display:flex;gap:8px;pointer-events:auto;flex-wrap:wrap">
+    <a href="#top" class="glass" style="border-radius:99px;height:38px;padding:0 18px;display:inline-flex;align-items:center;font-weight:800;font-size:14px;letter-spacing:-.02em">EUNSEO JEONG®</a>
+    <div class="glass" style="display:flex;gap:2px;border-radius:99px;height:38px;padding:3px;align-items:stretch">
+      <a href="#work" class="navtab">WORK</a>
+      <a href="#about" class="navtab">ABOUT</a>
+      <a href="#cv" class="navtab">CV</a>
+      <a href="#contact" class="navtab">CONTACT</a>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;pointer-events:auto;align-items:center">
+    <div class="glass status-pill" style="display:flex;align-items:center;gap:8px;border-radius:99px;height:38px;padding:0 16px;font-family:Archivo;font-size:11px;letter-spacing:.06em">
+      <span style="width:8px;height:8px;border-radius:50%;background:var(--accent);animation:blink 1.6s infinite"></span>OPEN TO WORK
+    </div>
+    <button id="themeToggle" class="glass" style="cursor:pointer;border-radius:99px;height:38px;padding:0 16px;display:inline-flex;align-items:center;font-family:Archivo;font-size:11px;letter-spacing:.06em">DARK ◑</button>
+  </div>
+</nav>
+
+<header id="top" style="position:relative;height:100vh;min-height:640px;overflow:hidden">
+  <div class="hero-slot" id="heroSlot">
+    <img src="assets/hero.webp" alt="" onerror="this.remove();document.getElementById('heroSlot').classList.add('is-empty')">
+    <span class="empty-cap">hero image — 대표 작업 or 인물 컷 드롭</span>
+  </div>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:0 24px 48px;pointer-events:none">
+    <h1 style="margin:0;font-size:clamp(64px,12.5vw,230px);line-height:.88;color:#FFFFFF;opacity:.93;mix-blend-mode:hard-light;text-align:left">JEONG <br>EUN SEO</h1>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-top:22px;flex-wrap:wrap;gap:16px">
+      <p style="margin:0;font-size:clamp(18px,2vw,26px);font-weight:600;letter-spacing:-.01em;max-width:560px;position:relative">Eunseo Jeong — a design generalist.<br><span style="color:var(--mut);font-size:.75em;font-weight:500">브랜드, 3D, AI, 에디토리얼, 모션 — 경계 없이 만듭니다.</span></p>
+      <div style="display:flex;gap:8px;pointer-events:auto">
+        <a href="#work" style="background:var(--ink);color:var(--bg);border-radius:99px;height:38px;box-sizing:border-box;padding:0 22px;display:inline-flex;align-items:center;font-size:13px;font-weight:700;letter-spacing:.03em">VIEW WORK ↓</a>
+        <a href="#contact" class="glass" style="border-radius:99px;height:38px;padding:0 22px;display:inline-flex;align-items:center;font-size:13px;font-weight:700;letter-spacing:.03em">LET'S TALK</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div style="border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:14px 0;font-family:'Fragment Mono',monospace;font-size:12px;letter-spacing:.08em;white-space:nowrap">
+  <div style="display:inline-block;animation:marq 28s linear infinite">
+    <span style="font-family:Nunito">BRAND IDENTITY ✳ 3D ✳ AI ✳ EDITORIAL ✳ MOTION ✳ SEOUL, KR ✳ OPEN TO WORK ✳&nbsp;</span><span style="font-family:Nunito">BRAND IDENTITY ✳ 3D ✳ AI ✳ EDITORIAL ✳ MOTION ✳ SEOUL, KR ✳ OPEN TO WORK ✳&nbsp;</span>
+  </div>
+</div>
+
+<section id="work" style="position:relative;padding:110px 24px 90px;scroll-margin-top:40px">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;max-width:1280px;margin:0 auto 70px;flex-wrap:wrap;gap:8px">
+    <h2 style="margin:0;font-size:clamp(34px,4.5vw,64px)">INDEX<span style="color:var(--accent)">.</span></h2>
+    <p style="margin:0;font-family:Nunito;font-size:15px;color:var(--mut);letter-spacing:.06em">SELECTED WORK 2024–2026 — 작업 목록 (06)</p>
+  </div>
+
+  <div style="max-width:1280px;margin:0 auto 84px">
+    <div style="position:relative;padding:0 20px 12px">
+      <div class="shelf-row">
+        <div class="cover" data-idx="1"><img src="assets/cover-01.webp" alt="Pinterest Crawler System"></div>
+        <div class="cover" data-idx="2"><img src="assets/cover-02.webp" alt="AI Facade Simulation"></div>
+        <div class="cover" data-idx="3"><img src="assets/cover-03.webp" alt="AI Game Visual Design"></div>
+      </div>
+      <div class="shelf-board"></div>
+    </div>
+    <div class="shelf-labels">
+      <div style="font-family:'Fragment Mono',monospace;font-size:11px;line-height:1.7;letter-spacing:.05em">
+        <div style="color:var(--mut);font-family:Nunito;font-size:15px">2026 · AI AUTOMATION</div>
+        <div data-plabel="1" style="font-weight:500;font-family:Nunito;font-size:15px">PINTEREST CRAWLER SYSTEM</div>
+      </div>
+      <div style="font-family:'Fragment Mono',monospace;font-size:11px;line-height:1.7;letter-spacing:.05em">
+        <div style="color:var(--mut);font-family:Nunito;font-size:15px">2026 · AI VISUAL</div>
+        <div data-plabel="2" style="font-weight:500;font-family:Nunito;font-size:15px">AI FACADE SIMULATION</div>
+      </div>
+      <div style="font-family:'Fragment Mono',monospace;font-size:11px;line-height:1.7;letter-spacing:.05em">
+        <div style="color:var(--mut);font-family:Nunito;font-size:15px">2026 · AI VISUAL</div>
+        <div data-plabel="3" style="font-weight:500;font-family:Nunito;font-size:15px">AI GAME VISUAL DESIGN</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1280px;margin:0 auto 84px">
+    <div style="position:relative;padding:0 20px 12px">
+      <div class="shelf-row">
+        <div class="cover" data-idx="4"><img src="assets/cover-04.webp" alt="AI Viral Advertisement Design"></div>
+        <div class="cover" data-idx="5"><img src="assets/cover-05.webp" alt="3D Clothing Design"></div>
+        <div class="cover" data-idx="6"><img src="assets/cover-06.webp" alt="Graduation Film"></div>
+      </div>
+      <div class="shelf-board"></div>
+    </div>
+    <div class="shelf-labels">
+      <div style="font-family:'Fragment Mono',monospace;font-size:11px;line-height:1.7;letter-spacing:.05em">
+        <div style="color:var(--mut);font-family:Nunito;font-size:15px">2026 · AI VISUAL</div>
+        <div data-plabel="4" style="font-weight:500;font-family:Nunito;font-size:15px">AI VIRAL ADVERTISEMENT DESIGN</div>
+      </div>
+      <div style="font-family:'Fragment Mono',monospace;font-size:11px;line-height:1.7;letter-spacing:.05em">
+        <div style="color:var(--mut);font-family:Nunito;font-size:15px">2025 · 3D VISUAL</div>
+        <div data-plabel="5" style="font-weight:500;font-family:Nunito;font-size:15px">3D CLOTHING DESIGN</div>
+      </div>
+      <div style="font-family:'Fragment Mono',monospace;font-size:11px;line-height:1.7;letter-spacing:.05em">
+        <div style="color:var(--mut);font-family:Nunito;font-size:15px">2024 · FASHION DESIGN</div>
+        <div data-plabel="6" style="font-weight:500;font-family:Nunito;font-size:15px">GRADUATION FILM</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="chip"><span style="color:var(--accent)">↗</span>&nbsp;<span id="chipText"></span></div>
+</section>
+
+<section id="about" style="border-top:1px solid #FFFFFF24;padding:110px 24px;scroll-margin-top:40px">
+  <div class="about-grid" style="max-width:1280px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:64px;align-items:start">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <h2 style="margin:0;font-size:clamp(34px,4.5vw,64px)">ABOUT<span style="color:var(--accent)">.</span></h2>
+      <img src="assets/portrait.webp" alt="정은서 프로필 사진" style="width:311px;height:380px;max-width:100%;object-fit:cover;display:block">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:28px;padding-top:14px">
+      <p style="margin:0;font-size:clamp(20px,2.4vw,32px);line-height:1.35;font-weight:600;letter-spacing:-.015em;text-wrap:pretty">HI, I'm Eunseo Jeong, a design generalist based in Seoul. I move between Fashion, 3D, AI-driven imagery, editorial and motion — treating each medium as one language, not five.</p>
+      <div style="margin:0;font-size:17px;line-height:1.8;color:var(--mut);max-width:650px;font-family:Nunito">안녕하세요, 디자이너 정은서 입니다. <br>한 분야에 갇히지 않는 제너럴리스트로서, 아이디어에 가장 잘 맞는 도구를 골라 사용합니다. <br>브랜드의 태도를 만들고, 그것을 화면과 지면, 움직임으로 전환하는 일을 좋아합니다.<br><p>AI의 등장으로 디자이너의 역할은 빠르게 변화하고 있습니다. 과거에는 많은 시간과 노력이 필요했던 작업들이 이제는 AI를 통해 손쉽게 구현되기도 합니다. 그렇기에 이 시대의 디자이너에게 필요한 자질은, 새로운 기술을 빠르게 흡수하고 자신의 것으로 만드는 태도, 디자인을 바라보는 안목, 그리고 떠올린 생각을 정확한 언어로 표현하는 능력이라고 생각합니다.</p><p>저는 변화하는 기술을 도구로 활용하며, 사람의 아이디어와 감각이 만들어내는 가치를 끊임없이 탐구하는 디자이너입니다.</p></div>
+      <div style="display:grid;grid-template-columns:110px 1fr;gap:12px 20px;border-top:1px solid var(--line);padding-top:24px;max-width:520px">
+        <span style="font-family:'Fragment Mono',monospace;font-size:15px;letter-spacing:.1em;color:var(--mut)">BIRTH</span>
+        <span style="font-size:15px;font-weight:600">2001.08.08</span>
+        <span style="font-family:'Fragment Mono',monospace;font-size:15px;letter-spacing:.1em;color:var(--mut)">PHONE</span>
+        <span style="font-size:15px;font-weight:600">+82 10-9144-5479</span>
+        <span style="font-family:'Fragment Mono',monospace;font-size:15px;letter-spacing:.1em;color:var(--mut)">EMAIL</span>
+        <span style="font-size:15px;font-weight:600">najes01@naver.com</span>
+        <span style="font-family:'Fragment Mono',monospace;font-size:15px;letter-spacing:.1em;color:var(--mut)">LOCATION</span>
+        <span style="font-size:15px;font-weight:600">Seoul, Republic of Korea</span>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <span style="border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">FASHION</span>
+        <span style="border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">3D</span>
+        <span style="border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">AI</span>
+        <span style="border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">EDITORIAL</span>
+        <span style="border:1px solid var(--line);border-radius:99px;padding:8px 14px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">MOTION</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cv" style="border-top:1px solid var(--line);padding:110px 24px;scroll-margin-top:40px">
+  <div style="max-width:1280px;margin:0 auto">
+    <h2 style="margin:0 0 48px;font-size:clamp(34px,4.5vw,64px)">CV<span style="color:var(--accent)">.</span></h2>
+
+    <div style="margin-bottom:56px">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
+        <span style="font-family:'Fragment Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--accent)">01</span>
+        <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:.08em">EXPERIENCE</h3>
+        <span style="font-size:13px;color:var(--mut)">경력</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2026.05 — Today</span>
+        <div>
+          <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">Freelance</div>
+          <div style="font-size:13px;color:var(--mut);margin-top:5px;line-height:1.6">AI driven commercial video ad production</div>
+        </div>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2025.10 — 2026.04</span>
+        <div>
+          <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">AI strategic planner intern, Marketing team</div>
+          <div style="font-size:13px;color:var(--mut);margin-top:5px;line-height:1.6">연매출 2조 패션 대기업에서 MLB / DUVETICA / SERGIOTACCHINI 브랜드 담당, AI도구를 활용한 <br>행사기획 및 셀럽 마케팅 전략 수립 어시스트<br><br>- TWS 명동 행사 기획 참여<br>- MLB 북촌 행사, 북촌 에디션 기획 참여<br>- Sergio tacchini 26FW 상품 개선 방향 기획 참여<br>- Duvetica 바이럴 캠페인 기획 및 Sergio tacchini 콜라보레이션 제안서 참여<br>- Instagram, youtube등 바이럴 데이터 아카이빙</div>
+        </div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">F&amp;F corporation — (주)에프앤에프</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2025.07 — 2025.08</span>
+        <div>
+          <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">Design assistant</div>
+          <div style="font-size:13px;color:var(--mut);margin-top:5px;line-height:1.6">KUHO 브랜드를 담당 및 패션 도식화와 제품촬영 어시스트</div>
+        </div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">SAMSUNG C&amp;T corporation — 삼성물산(주) 패션부문</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2025.04 — 2025.05</span>
+        <div>
+          <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">3D Apparel design assistant</div>
+          <div style="font-size:13px;color:var(--mut);margin-top:5px;line-height:1.6">GAP, ZARA등의 바이어 의사 결정 보조를 위한 3D apparel 작업, 핏 코멘트, 샘플 촬영, ERP관리</div>
+        </div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">Hansae fashion worldwide corporation — 한세실업(주)</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2023.12 — 2025.04</span>
+        <div>
+          <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">Cafe Manager</div>
+          <div style="font-size:13px;color:var(--mut);margin-top:5px;line-height:1.6">매장 운영 전반(인력 / 재고 / 포스 / 배달어플 / 신규인력 온보딩)을 총괄</div>
+        </div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">Fruita — 과일에 반하다, 프루타</span>
+      </div>
+    </div>
+
+    <div style="margin-bottom:56px">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
+        <span style="font-family:'Fragment Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--accent)">02</span>
+        <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:.08em">EDUCATION</h3>
+        <span style="font-size:13px;color:var(--mut)">학력</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2020.03 — 2025.02</span>
+        <div>
+          <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">BFS Clothing &amp; Textile Design</div>
+          <div style="font-size:13px;color:var(--mut);margin-top:5px;line-height:1.6">GPA : 3.87 / 4.5</div>
+        </div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">College of Art and Design, Kyunghee University — 경희대학교 예술디자인대학 졸업</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2021.03 — 2025.02</span>
+        <div>
+          <div style="font-size:17px;font-weight:700;letter-spacing:-.01em"><span style="letter-spacing:-0.17px">BFA Digital Contents Design, Double major</span></div>
+          <div style="font-size:13px;color:var(--mut);margin-top:5px;line-height:1.6">Completed track : Virtual Reality Content Industry - University Collaboration Track<br></div>
+        </div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">College of Art and Design, Kyunghee University - 경희대학교 예술디자인대학 졸업</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2017.03 — 2020.02</span>
+        <div>
+          <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">Saint Mary's Girls' High School</div>
+        </div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">부산 성모여자고등학교 졸업</span>
+      </div>
+    </div>
+
+    <div style="margin-bottom:56px">
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
+        <span style="font-family:'Fragment Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--accent)">03</span>
+        <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:.08em">ACTIVITY</h3>
+        <span style="font-size:13px;color:var(--mut)">경험·수상·전시</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2025</span>
+        <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">KOFOTI 3D Virtual designer training program</div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">Clo 3D. Blender등 3D시각화 도구 전문 교육 이수, 패션 기업 프로젝트 참여.</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2024</span>
+        <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">Digital Contents Design Major - Graduation Film, Kyung hee univ</div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">경희대학교 디지털콘텐츠학과 졸업전시로, 3D 패션필름을 기획 및 제작.</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2024</span>
+        <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">KHU LINC 3.0 Viral commercial video award</div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">신생 기업 홍보 목적의 바이럴 영상 기획, 촬영, 편집 경험. 우수상 수상.</span>
+      </div>
+      <div class="cvrow" style="display:grid;grid-template-columns:140px 1fr 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line);align-items:baseline">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">2024</span>
+        <div style="font-size:17px;font-weight:700;letter-spacing:-.01em">C&amp;T Design Major - Graduation Fashion Show, Kyung hee univ.</div>
+        <span style="font-size:14px;color:var(--mut);font-family:Nunito">경희대학교 의류디자인학과 졸업패션쇼로, 2착장의 의상 기획 및 제작.</span>
+      </div>
+    </div>
+
+    <div>
+      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:20px">
+        <span style="font-family:'Fragment Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--accent)">04</span>
+        <h3 style="margin:0;font-size:15px;font-weight:800;letter-spacing:.08em">SKILLS &amp; CERTIFICATIONS</h3>
+        <span style="font-size:13px;color:var(--mut)">스킬&amp;자격증</span>
+      </div>
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line)">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">AI</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">HIGGSFIELD</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">MIDJOURNEY</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">CLAUDE</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">GPT 5.6</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">COMFYUI</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line)">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">DESIGN TOOLS</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">FIGMA</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">PHOTOSHOP</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">ILLUSTRATOR</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">CAPCUT</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">BLENDER</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">CLO3D</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line)">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">SOFTWARE</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">MICROSOFT EXCEL</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">MICROSOFT POWERPOINT</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">MICROSOFT WORD</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:140px 1fr;gap:24px;padding:22px 8px;border-top:1px solid var(--line)">
+        <span style="font-family:Nunito;font-size:12px;color:var(--mut)">LANGUAGE</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em;font-weight:800">ENGLISH - TOEIC SPEAKING AL/160</span><span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">KOREAN — NATIVE</span>
+          <span style="border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-family:'Fragment Mono',monospace;font-size:13px;letter-spacing:.05em">ENGLISH — FLUENT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contact" style="border-top:1px solid var(--line);padding:110px 24px 40px;scroll-margin-top:40px">
+  <div style="max-width:1280px;margin:0 auto">
+    <p style="margin:0 0 10px;font-family:Nunito;font-size:12px;color:var(--mut);letter-spacing:.06em">NEW PROJECT? COFFEE? — 새 프로젝트, 커피챗 환영</p>
+    <a href="mailto:najes01@naver.com" class="talk" style="display:block;font-size:clamp(40px,8vw,140px);font-family:var(--font-head);font-weight:var(--head-wt);letter-spacing:var(--head-ls);line-height:1">LET'S TALK ↗</a>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:70px;flex-wrap:wrap;gap:16px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a href="#" class="glass" style="border-radius:99px;padding:10px 18px;font-size:12.5px;font-weight:600;letter-spacing:.04em">INSTAGRAM</a>
+        <a href="#" class="glass" style="border-radius:99px;padding:10px 18px;font-size:12.5px;font-weight:600;letter-spacing:.04em">BEHANCE</a>
+        <a href="#" class="glass" style="border-radius:99px;padding:10px 18px;font-size:12.5px;font-weight:600;letter-spacing:.04em">LINKEDIN</a>
+        <a href="mailto:najes01@naver.com" class="glass" style="border-radius:99px;padding:10px 18px;font-size:12.5px;font-weight:600;letter-spacing:.04em">EMAIL</a>
+      </div>
+      <p style="margin:0;font-family:Nunito;font-size:11px;color:var(--mut);letter-spacing:.05em">© 2026 EUNSEO JEONG — SEOUL, KR</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Theme toggle (defaultTheme: light)
+  var btn = document.getElementById('themeToggle');
+  function applyTheme(t) {
+    document.body.setAttribute('data-theme', t);
+    btn.textContent = t === 'light' ? 'DARK ◑' : 'LIGHT ◐';
+  }
+  var saved = null;
+  try { saved = localStorage.getItem('theme'); } catch (e) {}
+  applyTheme(saved === 'dark' ? 'dark' : 'light');
+  btn.addEventListener('click', function () {
+    var next = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  });
+
+  // Cursor chip over the work shelves
+  var work = document.getElementById('work');
+  var chip = document.getElementById('chip');
+  var chipText = document.getElementById('chipText');
+  var current = null;
+  work.addEventListener('mousemove', function (e) {
+    if (current) {
+      chip.style.left = (e.clientX + 18) + 'px';
+      chip.style.top = (e.clientY + 18) + 'px';
+    }
+  });
+  work.addEventListener('mouseleave', function () {
+    current = null;
+    chip.style.display = 'none';
+  });
+  window.addEventListener('scroll', function () {
+    current = null;
+    chip.style.display = 'none';
+  }, { passive: true });
+  Array.prototype.forEach.call(work.querySelectorAll('.cover'), function (cov) {
+    cov.addEventListener('mouseenter', function () {
+      var idx = cov.getAttribute('data-idx');
+      var label = work.querySelector('[data-plabel="' + idx + '"]');
+      current = label ? label.textContent.trim() : '';
+      chipText.textContent = current;
+      chip.style.display = 'block';
+    });
+  });
+})();
+</script>
+</body>
+</html>
