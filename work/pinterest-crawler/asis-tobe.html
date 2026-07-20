@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AS IS vs TO BE</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0d0d;
+  --white: #ffffff;
+  --gray: #888;
+  --accent: #EA3307;
+  --pinterest: #E60023;
+  --folder: #f0a500;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  font-family: 'Pretendard', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 34px 36px 36px;
+  overflow-x: hidden;
+}
+
+/* HEADER */
+.header {
+  display: none;
+}
+.header-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.header-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: -1px;
+}
+
+/* MAIN GRID */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  gap: 0 52px;
+  width: 100%;
+  max-width: 1100px;
+  align-items: start;
+}
+
+.divider {
+  background: rgba(255,255,255,0.08);
+  align-self: stretch;
+}
+
+/* SECTION TITLES */
+.section-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  margin-bottom: 6px;
+}
+.as-is .section-title { color: var(--gray); }
+.to-be .section-title { color: var(--accent); }
+
+.section-sub {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.3);
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+
+/* ─────────────── AS IS: PINTEREST DRAG ─────────────── */
+.pinterest-stage {
+  width: 100%;
+  height: 330px;
+  background: #1a1a1a;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.06);
+  --cursor-start-x: 30px;
+  --cursor-start-y: 80px;
+  --cursor-grab-x: 90px;
+  --cursor-grab-y: 80px;
+  --cursor-mid-x: 90px;
+  --cursor-mid-y: 120px;
+  --cursor-end-x: 200px;
+  --cursor-end-y: 280px;
+  --ghost-start-x: 20px;
+  --ghost-start-y: 65px;
+  --ghost-grab-x: 80px;
+  --ghost-grab-y: 65px;
+  --ghost-mid-x: 80px;
+  --ghost-mid-y: 105px;
+  --ghost-end-x: 190px;
+  --ghost-end-y: 265px;
+}
+
+/* Pinterest UI mockup */
+.pinterest-bar {
+  height: 44px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 10px;
+}
+.p-logo { color: var(--pinterest); font-weight: 900; font-size: 1.1rem; font-family: serif; }
+.p-search {
+  flex: 1;
+  height: 28px;
+  background: #f0f0f0;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  font-size: 0.7rem;
+  color: #999;
+}
+
+/* Pinterest image grid */
+.p-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px 8px 0;
+}
+.p-pin {
+  border-radius: 8px;
+  overflow: hidden;
+  background: #2a2a2a;
+  position: relative;
+}
+.p-pin-img {
+  width: 100%;
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  display: block;
+}
+
+/* Drag cursor */
+.drag-cursor {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  animation: dragPath 4s ease-in-out infinite;
+}
+.drag-cursor::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: #333;
+  border-radius: 50%;
+}
+
+/* Dragged image ghost */
+.drag-ghost {
+  position: absolute;
+  width: 70px;
+  height: 90px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  z-index: 9;
+  pointer-events: none;
+  animation: ghostPath 4s ease-in-out infinite;
+  opacity: 0;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+.drag-ghost img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Save indicator */
+.save-pop {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: var(--pinterest);
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 20px;
+  z-index: 10;
+  animation: savePop 4s ease-in-out infinite;
+  opacity: 0;
+}
+
+/* Manual counter */
+.manual-counter {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  font-size: 0.65rem;
+  color: rgba(255,255,255,0.4);
+  font-weight: 600;
+  z-index: 10;
+}
+.manual-count-num {
+  color: rgba(255,255,255,0.8);
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.8rem;
+}
+
+@keyframes dragPath {
+  0%   { top: var(--cursor-start-y); left: var(--cursor-start-x); transform: scale(1); }
+  16%  { top: var(--cursor-start-y); left: var(--cursor-start-x); transform: scale(0.9); }
+  38%  { top: var(--cursor-mid-y); left: var(--cursor-mid-x); transform: scale(0.9); }
+  60%  { top: var(--cursor-end-y); left: var(--cursor-end-x); transform: scale(1); }
+  80%  { top: var(--cursor-start-y); left: var(--cursor-start-x); transform: scale(0.9); }
+  100% { top: var(--cursor-start-y); left: var(--cursor-start-x); transform: scale(1); }
+}
+@keyframes ghostPath {
+  0%   { top: var(--ghost-start-y); left: var(--ghost-start-x); opacity: 0; transform: rotate(0deg); }
+  10%  { opacity: 0; }
+  18%  { top: var(--ghost-start-y); left: var(--ghost-start-x); opacity: 0.92; transform: rotate(-4deg); }
+  40%  { top: var(--ghost-mid-y); left: var(--ghost-mid-x); opacity: 0.92; transform: rotate(-4deg); }
+  58%  { top: var(--ghost-end-y); left: var(--ghost-end-x); opacity: 0.92; transform: rotate(3deg); }
+  68%  { top: var(--ghost-end-y); left: var(--ghost-end-x); opacity: 0; transform: rotate(3deg); }
+  100% { top: var(--ghost-start-y); left: var(--ghost-start-x); opacity: 0; transform: rotate(0deg); }
+}
+@keyframes savePop {
+  0%   { opacity: 0; transform: translateY(6px); }
+  55%  { opacity: 0; transform: translateY(6px); }
+  65%  { opacity: 1; transform: translateY(0); }
+  80%  { opacity: 1; }
+  90%  { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* ─────────────── TO BE: AUTO CRAWL + FOLDER ─────────────── */
+.crawl-stage {
+  width: 100%;
+  height: 330px;
+  background: #1a1a1a;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* Crawl progress bar */
+.crawl-bar-wrap {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  z-index: 10;
+}
+.crawl-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  animation: crawlProgress 8.6s ease-in-out infinite;
+  width: 0%;
+}
+@keyframes crawlProgress {
+  0%   { width: 0%; }
+  62%  { width: 70%; }
+  82%  { width: 100%; }
+  100% { width: 100%; }
+}
+
+/* Crawl status */
+.crawl-status {
+  position: absolute;
+  top: 14px; left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+.crawl-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
+.crawl-text {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Auto counter */
+.auto-counter {
+  position: absolute;
+  top: 12px; right: 16px;
+  z-index: 10;
+  text-align: right;
+}
+.auto-count-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: var(--accent);
+}
+.auto-count-label {
+  font-size: 0.55rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Image rain */
+.image-rain {
+  position: absolute;
+  top: 44px; left: 0; right: 0; bottom: 80px;
+  overflow: hidden;
+}
+.rain-img {
+  position: absolute;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #2a2a2a;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.rain-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Folder area */
+.folder-area {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 80px;
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 20px;
+}
+
+.folder-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+.folder-icon {
+  font-size: 1.6rem;
+  position: relative;
+}
+.folder-count {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 0.55rem;
+  font-weight: 900;
+  color: var(--folder);
+}
+.folder-label {
+  font-size: 0.6rem;
+  color: rgba(255,255,255,0.3);
+  text-align: center;
+  max-width: 76px;
+  line-height: 1.35;
+}
+
+/* Flying images to folder */
+.fly-img {
+  position: absolute;
+  width: 36px;
+  height: 46px;
+  border-radius: 5px;
+  overflow: hidden;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+}
+.fly-img img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Text content */
+.text-content {
+  margin-top: 28px;
+}
+.text-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: all 0.4s ease;
+}
+.text-item.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+.text-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  margin-top: 7px;
+  flex-shrink: 0;
+}
+.as-is .text-dot { background: rgba(255,255,255,0.2); }
+.to-be .text-dot { background: var(--accent); }
+.text-body {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  font-weight: 500;
+}
+.as-is .text-body { color: rgba(255,255,255,0.5); }
+.to-be .text-body { color: rgba(255,255,255,0.85); }
+.text-body strong { color: white; font-weight: 700; }
+.to-be .text-body strong { color: var(--accent); }
+
+/* Pipeline step emphasis */
+.folder-area {
+  justify-content: space-between;
+}
+.folder-item {
+  min-width: 76px;
+  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), filter 0.35s ease, opacity 0.35s ease;
+  opacity: 0.56;
+}
+.folder-item.active-step {
+  transform: scale(1.055);
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(234, 51, 7, 0.22));
+}
+.folder-item.active-final {
+  transform: scale(1.065);
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(0, 210, 90, 0.28));
+}
+.folder-item.active-step .folder-label,
+.folder-item.active-final .folder-label {
+  color: rgba(255,255,255,0.92);
+  font-weight: 700;
+}
+.folder-arrow {
+  color: rgba(255,255,255,0.24);
+  font-size: 0.85rem;
+  font-weight: 900;
+  transform: translateY(-6px);
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+.folder-arrow.active-arrow {
+  color: rgba(255,255,255,0.48);
+  transform: translateY(-6px) scale(1.06);
+}
+.completion-vfx {
+  position: absolute;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 35;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+}
+.completion-vfx::before {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 210, 90, 0.42);
+  animation: vfxRing 0.82s ease-out forwards;
+}
+.completion-vfx::after {
+  content: '✨';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -52%);
+  font-size: 0.9rem;
+  animation: vfxSpark 0.82s ease-out forwards;
+}
+.completion-vfx.show {
+  opacity: 1;
+  animation: vfxPop 0.82s ease-out forwards;
+}
+@keyframes vfxPop {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.35); }
+  18% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.28); }
+}
+@keyframes vfxRing {
+  0% { opacity: 0; transform: scale(0.4); }
+  25% { opacity: 1; }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+@keyframes vfxSpark {
+  0% { opacity: 0; transform: translate(-50%, -52%) scale(0.5) rotate(-12deg); }
+  25% { opacity: 1; transform: translate(-50%, -58%) scale(1.15) rotate(4deg); }
+  100% { opacity: 0; transform: translate(-50%, -90%) scale(0.72) rotate(14deg); }
+}
+
+
+/* Final selected references pop-up */
+.selected-result-stack {
+  position: absolute;
+  inset: 0;
+  z-index: 34;
+  pointer-events: none;
+}
+.selected-result-stack.show {
+  opacity: 1;
+}
+.selected-result-label {
+  position: absolute;
+  left: 50%;
+  top: 232px;
+  transform: translate(-50%, 8px);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.8);
+  background: rgba(17,17,17,0.78);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  padding: 6px 10px;
+  backdrop-filter: blur(6px);
+  opacity: 0;
+}
+.selected-result-stack.show .selected-result-label {
+  animation: selectedLabelReveal 2.25s ease forwards;
+}
+.selected-card {
+  position: absolute;
+  left: 378px;
+  top: 202px;
+  width: 96px;
+  height: 132px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #222;
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: 0 18px 38px rgba(0,0,0,0.44);
+  opacity: 0;
+  transform: translate(0, 0) scale(0.88);
+}
+.selected-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.selected-card:nth-child(2) {
+  z-index: 1;
+}
+.selected-card:nth-child(3) {
+  width: 96px;
+  height: 132px;
+  z-index: 3;
+}
+.selected-card:nth-child(4) {
+  z-index: 2;
+}
+.selected-result-stack.show .selected-card:nth-child(2) {
+  animation: slideLeftCard 2.25s cubic-bezier(0.22,1,0.36,1) forwards;
+  animation-delay: 0.14s;
+}
+.selected-result-stack.show .selected-card:nth-child(3) {
+  animation: slideCenterCard 2.25s cubic-bezier(0.22,1,0.36,1) forwards;
+  animation-delay: 0.02s;
+}
+.selected-result-stack.show .selected-card:nth-child(4) {
+  animation: slideRightCard 2.25s cubic-bezier(0.22,1,0.36,1) forwards;
+  animation-delay: 0.28s;
+}
+@keyframes slideCenterCard {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.86); }
+  12%  { opacity: 1; }
+  30%  { opacity: 1; transform: translate(-191px, -122px) scale(1); }
+  74%  { opacity: 1; transform: translate(-191px, -122px) scale(1); }
+  100% { opacity: 0; transform: translate(-191px, -112px) scale(0.98); }
+}
+@keyframes slideLeftCard {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.86); }
+  12%  { opacity: 1; }
+  32%  { opacity: 1; transform: translate(-330px, -122px) scale(1); }
+  74%  { opacity: 1; transform: translate(-330px, -122px) scale(1); }
+  100% { opacity: 0; transform: translate(-330px, -112px) scale(0.98); }
+}
+@keyframes slideRightCard {
+  0%   { opacity: 0; transform: translate(0, 0) scale(0.86); }
+  12%  { opacity: 1; }
+  32%  { opacity: 1; transform: translate(-52px, -122px) scale(1); }
+  74%  { opacity: 1; transform: translate(-52px, -122px) scale(1); }
+  100% { opacity: 0; transform: translate(-52px, -112px) scale(0.98); }
+}
+@keyframes selectedLabelReveal {
+  0%   { opacity: 0; transform: translate(-50%, 8px); }
+  28%  { opacity: 0; transform: translate(-50%, 8px); }
+  40%  { opacity: 1; transform: translate(-50%, 0); }
+  82%  { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 6px); }
+}
+
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">Process Visualization</div>
+  <div class="header-title">AS IS vs TO BE</div>
+</div>
+
+<div class="split">
+
+  <!-- AS IS -->
+  <div class="as-is">
+    <div class="section-title">AS IS</div>
+    <div class="section-sub">(problem)</div>
+
+    <div class="pinterest-stage">
+      <!-- Pinterest UI -->
+      <div class="pinterest-bar">
+        <img src="../../assets/work/pinterest-crawler/img-01.webp" style="width:24px;height:24px;object-fit:contain;" alt="Pinterest">
+        <div class="p-search">🔍 luxury athleisure 2026...</div>
+      </div>
+
+      <div class="p-grid">
+<div class="p-pin"><img class="p-pin-img" loading="lazy" decoding="async" src="../../assets/work/pinterest-crawler/img-02.webp" alt="pin1"></div>
+<div class="p-pin"><img class="p-pin-img" loading="lazy" decoding="async" src="../../assets/work/pinterest-crawler/img-03.webp" alt="pin2"></div>
+<div class="p-pin"><img class="p-pin-img" loading="lazy" decoding="async" src="../../assets/work/pinterest-crawler/img-04.webp" alt="pin3"></div>
+<div class="p-pin"><img class="p-pin-img" loading="lazy" decoding="async" src="../../assets/work/pinterest-crawler/img-05.webp" alt="pin4"></div>
+<div class="p-pin"><img class="p-pin-img" loading="lazy" decoding="async" src="../../assets/work/pinterest-crawler/img-06.webp" alt="pin5"></div>
+<div class="p-pin"><img class="p-pin-img" loading="lazy" decoding="async" src="../../assets/work/pinterest-crawler/img-07.webp" alt="pin6"></div>
+<div class="p-pin"><img class="p-pin-img" loading="lazy" decoding="async" src="../../assets/work/pinterest-crawler/img-08.webp" alt="pin7"></div>
+<div class="p-pin"><img class="p-pin-img" loading="lazy" decoding="async" src="../../assets/work/pinterest-crawler/img-09.webp" alt="pin8"></div>
+</div>
+
+      <!-- Drag cursor -->
+      <div class="drag-cursor"></div>
+
+      <!-- Ghost image being dragged: matches the pin currently being dragged -->
+      <div class="drag-ghost">
+        <img id="dragGhostImg" src="" alt="dragged pin preview">
+      </div>
+
+      <!-- Save popup -->
+      <div class="save-pop">💾 저장됨 (1/∞)</div>
+
+      <!-- Manual counter -->
+      <div class="manual-counter">
+        수동 저장: <span class="manual-count-num" id="manualCount">0</span>장
+      </div>
+    </div>
+
+    <div class="text-content">
+      <div class="text-item">
+        <div class="text-dot"></div>
+        <div class="text-body">PINTEREST, COSMOS에서 <strong>수동 이미지 수집</strong></div>
+      </div>
+      <div class="text-item">
+        <div class="text-dot"></div>
+        <div class="text-body">이미지 저장/분류/정리 <strong>작업 반복</strong></div>
+      </div>
+      <div class="text-item">
+        <div class="text-dot"></div>
+        <div class="text-body">담당자의 <strong>감각에 의존</strong>한 레퍼런스 해석</div>
+      </div>
+      <div class="text-item">
+        <div class="text-dot"></div>
+        <div class="text-body">트렌드 키워드 <strong>수기 정리</strong></div>
+      </div>
+      <div class="text-item">
+        <div class="text-dot"></div>
+        <div class="text-body">레퍼런스는 쌓이지만 <strong>데이터화 어려운 구조</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- TO BE -->
+  <div class="to-be">
+    <div class="section-title">TO BE</div>
+    <div class="section-sub">(solution)</div>
+
+    <div class="crawl-stage">
+      <!-- Progress bar -->
+      <div class="crawl-bar-wrap"><div class="crawl-bar-fill"></div></div>
+
+      <!-- Status -->
+      <div class="crawl-status">
+        <div class="crawl-dot"></div>
+        <div class="crawl-text">Auto Crawling...</div>
+      </div>
+
+      <!-- Counter -->
+      <div class="auto-counter">
+        <div class="auto-count-num" id="autoCount">0</div>
+        <div class="auto-count-label">images collected</div>
+      </div>
+
+      <!-- Image rain area -->
+      <div class="image-rain" id="imageRain"></div>
+
+      <!-- Folder area -->
+      <div class="folder-area">
+        <div class="folder-item" data-step="0">
+          <div class="folder-icon">📁</div>
+          <div class="folder-count" id="f1count">0</div>
+          <div class="folder-label">대량 수집</div>
+        </div>
+        <div class="folder-arrow" data-arrow="0">→</div>
+        <div class="folder-item" data-step="1">
+          <div class="folder-icon">📁</div>
+          <div class="folder-count" id="f2count">0</div>
+          <div class="folder-label">비율 필터링</div>
+        </div>
+        <div class="folder-arrow" data-arrow="1">→</div>
+        <div class="folder-item" data-step="2">
+          <div class="folder-icon">✨</div>
+          <div class="folder-count" id="f3count" style="color:#00D25A;">0</div>
+          <div class="folder-label">AI 선별</div>
+        </div>
+      </div>
+
+      <!-- Flying images container -->
+      <div id="flyContainer" style="position:absolute;inset:0;pointer-events:none;z-index:20;"></div>
+      <div id="completionVfx" class="completion-vfx"></div>
+      <div id="selectedResultStack" class="selected-result-stack">
+        <div class="selected-result-label">최종 선별본</div>
+        <div class="selected-card"><img id="selectedImg1" src="" alt="selected reference 1"></div>
+        <div class="selected-card"><img id="selectedImg2" src="" alt="selected reference 2"></div>
+        <div class="selected-card"><img id="selectedImg3" src="" alt="selected reference 3"></div>
+      </div>
+    </div>
+
+    <div class="text-content">
+      <div class="text-item">
+        <div class="text-dot"></div>
+        <div class="text-body">키워드 입력 시 관련 이미지 <strong>대량 자동 크롤링</strong></div>
+      </div>
+      <div class="text-item">
+        <div class="text-dot"></div>
+        <div class="text-body">이미지 활용 목적에 따른 <strong>비율 필터링</strong></div>
+      </div>
+      <div class="text-item">
+        <div class="text-dot"></div>
+        <div class="text-body"><strong>CLAUDE 프롬프트 기반 이미지 평가</strong>로<br>분석 기준 일관화</div>
+      </div>
+      <div class="text-item">
+        <div class="text-dot"></div>
+        <div class="text-body"><strong>AI 선별 결과</strong> 자동 폴더링 및 아카이빙</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── AS IS: manual counter ──
+let manualCount = 0;
+setInterval(() => {
+  // Increment on each "save" cycle (synced with savePop animation ~4s)
+}, 4000);
+document.addEventListener('animationiteration', () => {}, false);
+
+// Manual counter using CSS animation sync
+let mc = 0;
+setInterval(() => {
+  mc++;
+  document.getElementById('manualCount').textContent = mc;
+}, 4000);
+
+// ── TO BE: Korean staged pipeline motion ──
+const rain = document.getElementById('imageRain');
+const flyContainer = document.getElementById('flyContainer');
+const crawlStage = document.querySelector('.crawl-stage');
+const folderItems = Array.from(document.querySelectorAll('.folder-area .folder-item'));
+const folderArrows = Array.from(document.querySelectorAll('.folder-arrow'));
+const completionVfx = document.getElementById('completionVfx');
+const selectedResultStack = document.getElementById('selectedResultStack');
+const selectedImgEls = [
+  document.getElementById('selectedImg1'),
+  document.getElementById('selectedImg2'),
+  document.getElementById('selectedImg3')
+];
+
+function showSelectedResults() {
+  if (!selectedResultStack || !selectedImgEls.length || !imagePool || !imagePool.length) return;
+
+  // Use the most recently crawled images so the result feels connected to the current cycle.
+  const base = Math.max(0, imageCursor - 6);
+  const picks = [base, base + 2, base + 4].map(i => imagePool[i % imagePool.length]);
+
+  selectedImgEls.forEach((img, i) => {
+    if (img) img.src = picks[i];
+  });
+
+  selectedResultStack.classList.remove('show');
+  void selectedResultStack.offsetWidth;
+  selectedResultStack.classList.add('show');
+}
+
+function activateStep(step, isFinal = false) {
+  folderItems.forEach((item, i) => {
+    item.classList.remove('active-step', 'active-final');
+    if (i === step) item.classList.add(isFinal ? 'active-final' : 'active-step');
+  });
+  folderArrows.forEach((arrow, i) => {
+    arrow.classList.toggle('active-arrow', i < step);
+  });
+}
+
+function triggerCompletionVfx() {
+  if (!completionVfx || !crawlStage || !folderItems[2]) return;
+  const stageRect = crawlStage.getBoundingClientRect();
+  const iconRect = folderItems[2].querySelector('.folder-icon').getBoundingClientRect();
+  completionVfx.style.left = `${iconRect.left - stageRect.left + iconRect.width / 2}px`;
+  completionVfx.style.top = `${iconRect.top - stageRect.top + iconRect.height / 2}px`;
+  completionVfx.classList.remove('show');
+  void completionVfx.offsetWidth;
+  completionVfx.classList.add('show');
+}
+const keywordPool = ['대량 수집 중', '비율 기준 정리 중', 'AI 선별 중'];
+const imagePool = [
+  "../../assets/work/pinterest-crawler/img-10.webp",
+  "../../assets/work/pinterest-crawler/img-11.webp",
+  "../../assets/work/pinterest-crawler/img-12.webp",
+  "../../assets/work/pinterest-crawler/img-13.webp",
+  "../../assets/work/pinterest-crawler/img-14.webp",
+  "../../assets/work/pinterest-crawler/img-15.webp",
+  "../../assets/work/pinterest-crawler/img-07.webp",
+  "../../assets/work/pinterest-crawler/img-16.webp",
+  "../../assets/work/pinterest-crawler/img-17.webp",
+  "../../assets/work/pinterest-crawler/img-18.webp",
+  "../../assets/work/pinterest-crawler/img-19.webp",
+  "../../assets/work/pinterest-crawler/img-20.webp",
+  "../../assets/work/pinterest-crawler/img-21.webp",
+  "../../assets/work/pinterest-crawler/img-03.webp",
+  "../../assets/work/pinterest-crawler/img-22.webp",
+  "../../assets/work/pinterest-crawler/img-23.webp",
+  "../../assets/work/pinterest-crawler/img-24.webp",
+  "../../assets/work/pinterest-crawler/img-04.webp",
+  "../../assets/work/pinterest-crawler/img-25.webp"
+];
+
+
+let autoCount = 0;
+let f1 = 0, f2 = 0, f3 = 0;
+let imageCursor = 0;
+let cycleTimer = null;
+let isPipelineRunning = false;
+
+const TARGET_RAW = 300;
+const TARGET_RATIO = 184;
+const TARGET_AI = 42;
+
+function nextImageSrc() {
+  const src = imagePool[imageCursor % imagePool.length];
+  imageCursor += 1;
+  return src;
+}
+
+function folderCenter(index) {
+  if (!crawlStage || !folderItems[index]) return {x: 0, y: 0};
+  const stageRect = crawlStage.getBoundingClientRect();
+  const itemRect = folderItems[index].querySelector('.folder-icon').getBoundingClientRect();
+  return {
+    x: itemRect.left - stageRect.left + itemRect.width / 2,
+    y: itemRect.top - stageRect.top + itemRect.height / 2
+  };
+}
+
+function setStatus(text) {
+  const crawlText = document.querySelector('.crawl-text');
+  if (crawlText) crawlText.textContent = text;
+}
+
+function activateStep(step, isFinal = false) {
+  folderItems.forEach((item, i) => {
+    item.classList.remove('active-step', 'active-final');
+    if (i === step) item.classList.add(isFinal ? 'active-final' : 'active-step');
+  });
+  folderArrows.forEach((arrow, i) => {
+    arrow.classList.toggle('active-arrow', i < step);
+  });
+}
+
+function clearActiveSteps() {
+  folderItems.forEach(item => item.classList.remove('active-step', 'active-final'));
+  folderArrows.forEach(arrow => arrow.classList.remove('active-arrow'));
+}
+
+function triggerCompletionVfx() {
+  if (!completionVfx || !crawlStage || !folderItems[2]) return;
+  const stageRect = crawlStage.getBoundingClientRect();
+  const iconRect = folderItems[2].querySelector('.folder-icon').getBoundingClientRect();
+  completionVfx.style.left = `${iconRect.left - stageRect.left + iconRect.width / 2}px`;
+  completionVfx.style.top = `${iconRect.top - stageRect.top + iconRect.height / 2}px`;
+  completionVfx.classList.remove('show');
+  void completionVfx.offsetWidth;
+  completionVfx.classList.add('show');
+}
+
+function animateFly(src, sourceEl, folderIndex, scale = 0.34, delay = 0) {
+  setTimeout(() => {
+    if (!crawlStage || !flyContainer || !sourceEl || !document.body.contains(sourceEl)) return;
+
+    const stageRect = crawlStage.getBoundingClientRect();
+    const sourceRect = sourceEl.getBoundingClientRect();
+    const target = folderCenter(folderIndex);
+
+    const fly = document.createElement('div');
+    fly.className = 'fly-img';
+    fly.innerHTML = `<img src="${src}" alt="folder item">`;
+    fly.style.width = `${Math.max(26, sourceRect.width * 0.62)}px`;
+    fly.style.height = `${Math.max(34, sourceRect.height * 0.62)}px`;
+    fly.style.left = `${sourceRect.left - stageRect.left + sourceRect.width * 0.18}px`;
+    fly.style.top = `${sourceRect.top - stageRect.top + sourceRect.height * 0.18}px`;
+    fly.style.opacity = '0';
+    fly.style.boxShadow = '0 10px 24px rgba(0,0,0,0.35)';
+    fly.style.border = '1px solid rgba(255,255,255,0.14)';
+    fly.style.background = '#1f1f1f';
+    fly.style.transform = 'translate(0,0) scale(1) rotate(0deg)';
+    fly.style.transition = 'transform 0.85s cubic-bezier(0.22,1,0.36,1), opacity 0.22s ease';
+    flyContainer.appendChild(fly);
+
+    requestAnimationFrame(() => {
+      const flyRect = fly.getBoundingClientRect();
+      const currentX = flyRect.left - stageRect.left + flyRect.width / 2;
+      const currentY = flyRect.top - stageRect.top + flyRect.height / 2;
+      const dx = target.x - currentX;
+      const dy = target.y - currentY;
+      const rot = (Math.random() * 12 - 6).toFixed(2);
+      fly.style.opacity = '1';
+      fly.style.transform = `translate(${dx}px, ${dy}px) scale(${scale}) rotate(${rot}deg)`;
+    });
+
+    setTimeout(() => { fly.style.opacity = '0'; }, 620);
+    setTimeout(() => fly.remove(), 980);
+  }, delay);
+}
+
+function createRainImg() {
+  if (!rain) return null;
+
+  const div = document.createElement('div');
+  div.className = 'rain-img';
+
+  const src = nextImageSrc();
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = 'crawled image';
+  div.appendChild(img);
+
+  const w = 54 + Math.random() * 34;
+  const h = w * (1.24 + Math.random() * 0.26);
+  const x = Math.random() * Math.max(10, rain.offsetWidth - w - 10);
+  const settleY = 12 + Math.random() * Math.max(30, rain.offsetHeight - h - 24);
+
+  div.style.cssText = `
+    width:${w}px; height:${h}px;
+    left:${x}px; top:-${h + 12}px;
+    transition: top ${0.72 + Math.random() * 0.5}s cubic-bezier(0.25,1,0.5,1), opacity 0.4s ease, transform 0.4s ease;
+    opacity: 0;
+    border-radius: 7px;
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+    background: #222;
+  `;
+  rain.appendChild(div);
+
+  requestAnimationFrame(() => {
+    div.style.opacity = '0.96';
+    div.style.top = `${settleY}px`;
+  });
+
+  setTimeout(() => {
+    animateFly(src, div, 0, 0.40, 0);
+  }, 260);
+
+  setTimeout(() => {
+    div.style.opacity = '0';
+    div.style.transform = 'translateY(10px) scale(0.96)';
+    setTimeout(() => div.remove(), 420);
+  }, 1950 + Math.random() * 420);
+
+  return div;
+}
+
+function resetPipeline() {
+  if (rain) rain.innerHTML = '';
+  if (flyContainer) flyContainer.innerHTML = '';
+  if (selectedResultStack) selectedResultStack.classList.remove('show');
+  autoCount = 0;
+  f1 = 0; f2 = 0; f3 = 0;
+  document.getElementById('autoCount').textContent = 0;
+  document.getElementById('f1count').textContent = 0;
+  document.getElementById('f2count').textContent = 0;
+  document.getElementById('f3count').textContent = 0;
+  clearActiveSteps();
+}
+
+function startCollectionPhase() {
+  setStatus('자동 이미지 파이프라인 · 대량 수집 중');
+  activateStep(0);
+
+  const spawnTotal = 22;
+  for (let i = 0; i < spawnTotal; i++) {
+    setTimeout(() => {
+      createRainImg();
+      autoCount = Math.round((i + 1) / spawnTotal * TARGET_RAW);
+      f1 = autoCount;
+      document.getElementById('autoCount').textContent = autoCount;
+      document.getElementById('f1count').textContent = f1;
+    }, i * 95);
+  }
+}
+
+function startRatioPhase() {
+  setStatus('자동 이미지 파이프라인 · 비율 기준 정제 중');
+  activateStep(1);
+
+  const startVal = f2;
+  const steps = 12;
+  for (let i = 0; i <= steps; i++) {
+    setTimeout(() => {
+      f2 = Math.round(startVal + (TARGET_RATIO - startVal) * (i / steps));
+      document.getElementById('f2count').textContent = f2;
+    }, i * 70);
+  }
+}
+
+function startAiPhase() {
+  setStatus('자동 이미지 파이프라인 · AI 선별 중');
+  activateStep(2, true);
+
+  const startVal = f3;
+  const steps = 10;
+  for (let i = 0; i <= steps; i++) {
+    setTimeout(() => {
+      f3 = Math.round(startVal + (TARGET_AI - startVal) * (i / steps));
+      document.getElementById('f3count').textContent = f3;
+    }, i * 75);
+  }
+
+  setTimeout(() => {
+    setStatus('자동 이미지 파이프라인 · 선별 완료');
+    triggerCompletionVfx();
+    setTimeout(showSelectedResults, 180);
+  }, 980);
+}
+
+function runPipelineCycle() {
+  if (isPipelineRunning) return;
+  isPipelineRunning = true;
+
+  resetPipeline();
+  startCollectionPhase();
+
+  setTimeout(startRatioPhase, 2850);
+  setTimeout(startAiPhase, 4550);
+
+  setTimeout(() => {
+    clearActiveSteps();
+    isPipelineRunning = false;
+  }, 6900);
+}
+
+// Finite cycle: collect → ratio filter → AI selection → complete → short pause → repeat
+runPipelineCycle();
+cycleTimer = setInterval(runPipelineCycle, 8600);
+
+// ── Text items stagger in ──
+const textItems = document.querySelectorAll('.text-item');
+textItems.forEach((item, i) => {
+  setTimeout(() => item.classList.add('visible'), 300 + i * 150);
+});
+</script>
+
+<script>
+// AS IS drag ghost: cycle through each Pinterest pin so the ghost image matches the selected image.
+(function () {
+  const stage = document.querySelector('.pinterest-stage');
+  const pins = Array.from(document.querySelectorAll('.as-is .p-pin-img'));
+  const ghost = document.getElementById('dragGhostImg');
+  const cursor = document.querySelector('.drag-cursor');
+  const ghostBox = document.querySelector('.drag-ghost');
+
+  if (!stage || !pins.length || !ghost || !cursor || !ghostBox) return;
+
+  let dragIndex = 0;
+
+  function setDragPin(index) {
+    const pin = pins[index % pins.length];
+    const stageRect = stage.getBoundingClientRect();
+    const pinRect = pin.getBoundingClientRect();
+
+    const cursorSize = 28;
+    const ghostW = 70;
+    const ghostH = 90;
+
+    const startX = pinRect.left - stageRect.left + pinRect.width * 0.5 - cursorSize * 0.5;
+    const startY = pinRect.top - stageRect.top + pinRect.height * 0.42 - cursorSize * 0.5;
+    const ghostStartX = pinRect.left - stageRect.left + pinRect.width * 0.5 - ghostW * 0.5;
+    const ghostStartY = pinRect.top - stageRect.top + pinRect.height * 0.42 - ghostH * 0.5;
+
+    const endX = stage.clientWidth - 92;
+    const endY = stage.clientHeight - 74;
+    const ghostEndX = stage.clientWidth - 110;
+    const ghostEndY = stage.clientHeight - 95;
+
+    const midX = (startX + endX) * 0.5;
+    const midY = Math.max(92, Math.min(stage.clientHeight - 130, startY + 58));
+    const ghostMidX = (ghostStartX + ghostEndX) * 0.5;
+    const ghostMidY = Math.max(76, Math.min(stage.clientHeight - 150, ghostStartY + 58));
+
+    stage.style.setProperty('--cursor-start-x', `${startX}px`);
+    stage.style.setProperty('--cursor-start-y', `${startY}px`);
+    stage.style.setProperty('--cursor-mid-x', `${midX}px`);
+    stage.style.setProperty('--cursor-mid-y', `${midY}px`);
+    stage.style.setProperty('--cursor-end-x', `${endX}px`);
+    stage.style.setProperty('--cursor-end-y', `${endY}px`);
+
+    stage.style.setProperty('--ghost-start-x', `${ghostStartX}px`);
+    stage.style.setProperty('--ghost-start-y', `${ghostStartY}px`);
+    stage.style.setProperty('--ghost-mid-x', `${ghostMidX}px`);
+    stage.style.setProperty('--ghost-mid-y', `${ghostMidY}px`);
+    stage.style.setProperty('--ghost-end-x', `${ghostEndX}px`);
+    stage.style.setProperty('--ghost-end-y', `${ghostEndY}px`);
+
+    ghost.src = pin.src;
+    ghost.alt = `pin${index + 1}`;
+  }
+
+  function restartAnimation(el) {
+    el.style.animation = 'none';
+    // Force reflow so CSS animation restarts with the new image and path.
+    void el.offsetHeight;
+    el.style.animation = '';
+  }
+
+  setDragPin(dragIndex);
+
+  ghostBox.addEventListener('animationiteration', function () {
+    dragIndex = (dragIndex + 1) % pins.length;
+    setDragPin(dragIndex);
+    restartAnimation(cursor);
+    restartAnimation(ghostBox);
+  });
+
+  window.addEventListener('resize', function () {
+    setDragPin(dragIndex);
+  });
+})();
+</script>
+
+</body>
+</html>
